@@ -40,20 +40,15 @@ public class TacheEvenementRappelTest {
     private TacheEvenementRappel tacheEvenementRappel;
 
     @Test
-    public void given_liste_2_evenement_a_rappeler_when_envoi_des_mails_then_envoi_2_mail_formater() throws EvenementRappelException {
+    public void given_liste_2_evenement_a_rappeler_when_envoi_des_mails_then_envoi_2_mail() throws EvenementRappelException {
         List<String> emails = new ArrayList<>();
         int cpt = 0;
         emails.add("test.test@test.fr");
         Mockito.when(apiGroupePersonneAdapter.getEmailByGroupe(Mockito.any())).thenReturn(emails);
         Mockito.when(apiPersonneAdapter.getNomPrenomParId(Mockito.any())).thenReturn("Mr Power");
         Mockito.when(evenementParcoursIntegrationAdapter.getEvenementsARappeler()).thenReturn(getListeEvenementRappelDummy());
-        Mockito.doAnswer((Answer) invocation -> {
-            Object message = invocation.getArgument(2);
-            Assertions.assertThat(message).isEqualTo("L'évènement Point accueil du collaborateur Mr Power est le 23/10/2018.");
-            return null;
-        }).when(emailService).sendSimpleMessage(Mockito.any(),Mockito.any(),Mockito.any());
-        //Mockito.when();
         tacheEvenementRappel.sendRappel();
+        Mockito.verify(emailService,Mockito.times(2)).sendSimpleMessage(Mockito.any(),Mockito.any(),Mockito.any());
     }
 
     private List<EvenementRappel> getListeEvenementRappelDummy(){
